@@ -5,8 +5,8 @@ defmodule GamePort do
 	# This determines what we do based on the content of the message
 	def getResponse(packet) do
 		case String.split(packet) do
-			["signup"] -> "Welcome Aboard"
-			_		   -> "Command not recognized"
+			["signup"] -> {:ok, "Welcome Aboard\n"}
+			_		   -> {:ok, "Command not recognized\n"}
 		end
 	end
 
@@ -27,8 +27,8 @@ defmodule GamePort do
 
 	# This is called on every successful TCP packet we take in
 	def handle_info({:tcp, socket, packet}, state) do
-		IO.inspect packet, label: "incoming packet"
-		:gen_tcp.send socket, "Hi Blackode \n"
+		{:ok, response} = getResponse packet
+		:gen_tcp.send socket, response
 		{:noreply, state}
 	end
 
