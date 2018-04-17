@@ -6,6 +6,7 @@ defmodule Game.PlayerSupervisor do
 
 		DynamicSupervisor.start_link(__MODULE__, :ok, name: :player_sup)
 
+	end
 
 	def init(:ok) do
 
@@ -15,8 +16,8 @@ defmodule Game.PlayerSupervisor do
 
 	def new_player(name) do
 
-		spec = %{id: Player, start: {Game.Player, :create, [name]}}
-		start_child(__MODULE__, spec)
+		spec = %{id: Game.PlayerAgent, start: {Game.PlayerAgent, :create, [name]}}
+		DynamicSupervisor.start_child(:player_sup, spec)
 
 	end
 

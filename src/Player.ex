@@ -2,13 +2,13 @@ defmodule Player do
 	defstruct name: "PLAYER", health: 100
 end
 
-defmodule PlayerAgent do
+defmodule Game.PlayerAgent do
 
 	# Takes in a player's name, makes a new player, returns his/her PID
 	def create(player_name) do
 		player = %Player{name: player_name}
 		{:ok, pid} = Agent.start_link(fn -> player end)
-		res = PlayerRegistry.register_name(player_name, pid)
+		res = Game.PlayerRegistry.register_name(player_name, pid)
 		IO.puts res
 		pid
 	end
