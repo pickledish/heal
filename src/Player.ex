@@ -8,6 +8,8 @@ defmodule PlayerAgent do
 	def create(player_name) do
 		player = %Player{name: player_name}
 		{:ok, pid} = Agent.start_link(fn -> player end)
+		res = PlayerRegistry.register_name(player_name, pid)
+		IO.puts res
 		pid
 	end
 

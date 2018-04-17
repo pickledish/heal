@@ -5,8 +5,8 @@ defmodule GamePort do
 	# This determines what we do based on the content of the message
 	def getResponse(packet) do
 		case String.split(packet) do
-			["signup"] -> {:ok, "Welcome Aboard\n"}
-			_		   -> {:ok, "Command not recognized\n"}
+			["signup", name] -> {:ok, "Welcome Aboard #{name}\n"}
+			_		         -> {:ok, "Command not recognized\n"}
 		end
 	end
 
