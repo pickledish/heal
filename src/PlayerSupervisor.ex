@@ -1,5 +1,5 @@
 defmodule Game.PlayerSupervisor do
-	
+
 	use DynamicSupervisor
 
 	def start_link(opts) do
