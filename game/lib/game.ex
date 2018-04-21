@@ -1,18 +1,17 @@
 defmodule GAME do
-  @moduledoc """
-  Documentation for GAME.
-  """
 
-  @doc """
-  Hello world.
+	use Application
 
-  ## Examples
+	def start(_type, _args) do
 
-      iex> GAME.hello
-      :world
+		IO.puts "I'm running!"
 
-  """
-  def hello do
-    :world
-  end
+		:ets.new(:health_cache, [:named_table, :public])
+
+		children = [GAME.PlayerSupervisor, GAME.PlayerRegistry]
+		options  = [strategy: :one_for_one, name: GAME.Supervisor]
+
+		Supervisor.start_link(children, options)
+
+	end
 end

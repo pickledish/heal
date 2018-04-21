@@ -4,8 +4,8 @@ defmodule GAME.PlayerRegistry do
 
 	# API ---------------------------------------------------------------------
 
-	def start_link do
-		GenServer.start_link(__MODULE__, nil, name: :player_reg)
+	def start_link(_) do
+		GenServer.start_link(__MODULE__, :ok, name: :player_reg)
 	end
 
 	def whereis_name(player_name) do

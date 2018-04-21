@@ -15,7 +15,7 @@ defmodule PlayerRegistryTest do
 
 	test "Players can re-register correctly" do
 		{:ok, pid1} = GAME.PlayerAgent.create("Jim")
-		GAME.PlayerRegistry.register_name("Jim", pid1)
+		assert GAME.PlayerRegistry.register_name("Jim", pid1) == :ok
 		{:ok, pid2} = GAME.PlayerAgent.create("Jim")
 		assert GAME.PlayerRegistry.register_name("Jim", pid2) == :rewrite
 	end

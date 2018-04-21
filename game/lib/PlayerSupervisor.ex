@@ -2,7 +2,7 @@ defmodule GAME.PlayerSupervisor do
 
 	use DynamicSupervisor
 
-	def start_link() do
+	def start_link(_) do
 
 		# We can give it the atom name :player_sup since there'll only be one
 		DynamicSupervisor.start_link(__MODULE__, :ok, name: :player_sup)
