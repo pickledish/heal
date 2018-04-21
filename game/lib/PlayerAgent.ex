@@ -15,7 +15,12 @@ defmodule GAME.PlayerAgent do
 	end
 
 	def create(player_name) do
-		GenServer.start_link(__MODULE__, %Player{name: player_name})
+		case :ets.lookup(:health_cache, player_name) do
+			[{_, hp}] -> 
+				GenServer.start_link(__MODULE__, %Player{name: player_name, health: hp})
+			[] -> 
+				GenServer.start_link(__MODULE__, %Player{name: player_name})
+		end
 	end
 
 	def register(player_name, pid) do
@@ -30,7 +35,7 @@ defmodule GAME.PlayerAgent do
 		GenServer.call(pid, {:change, amount})
 	end
 
-	def health(pid) do
+	def status(pid) do
 		GenServer.call(pid, {:get})
 	end
 
@@ -41,8 +46,9 @@ defmodule GAME.PlayerAgent do
 	end
 
 	def handle_call({:change, amount}, _from, state) do
-		updater = fn (health) -> health + amount end
-		{:reply, :ok, Map.update(state, :health, 0, updater)}
+		new = state.health + amount
+		:ets.insert(:health_cache, {state.name, new})
+		{:reply, :ok, Map.put(state, :health, new)}
 	end
 
 	def handle_call({:get}, _from, state) do
