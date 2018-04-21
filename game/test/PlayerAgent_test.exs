@@ -4,7 +4,7 @@ defmodule PlayerAgentTest do
 
 	setup do
 		:ets.new(:health_cache, [:named_table, :public])
-		GAME.PlayerRegistry.start_link
+		GAME.PlayerRegistry.start_link(:ok)
 		:ok
 	end
 

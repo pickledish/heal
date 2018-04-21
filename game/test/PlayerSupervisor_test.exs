@@ -4,8 +4,8 @@ defmodule PlayerSupervisorTest do
 
 	setup do
 		:ets.new(:health_cache, [:named_table, :public])
-		GAME.PlayerSupervisor.start_link
-		GAME.PlayerRegistry.start_link
+		GAME.PlayerSupervisor.start_link(:ok)
+		GAME.PlayerRegistry.start_link(:ok)
 		:ok
 	end
 

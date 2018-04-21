@@ -20,6 +20,10 @@ defmodule GAME.PlayerRegistry do
 		GenServer.cast(:player_reg, {:unregister_name, player_name})
 	end
 
+	def dispatch(message) do
+		GenServer.cast(:player_reg, {:dispatch, message})
+	end
+
 	# SERVER ------------------------------------------------------------------
 
 	def init(_) do
@@ -41,7 +45,31 @@ defmodule GAME.PlayerRegistry do
 		{:noreply, Map.delete(state, player_name)}
 	end
 
+	def handle_cast({:dispatch, message}, state) do
+		for {_, pid} <- state do
+			GenServer.call(pid, message)
+		end
+		{:noreply, state}
+	end
+
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

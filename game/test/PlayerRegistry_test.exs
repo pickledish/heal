@@ -4,7 +4,7 @@ defmodule PlayerRegistryTest do
 
 	setup do
 		:ets.new(:health_cache, [:named_table, :public])
-		GAME.PlayerRegistry.start_link
+		GAME.PlayerRegistry.start_link(:ok)
 		:ok
 	end
 
@@ -24,6 +24,15 @@ defmodule PlayerRegistryTest do
 		{:ok, pid} = GAME.PlayerAgent.create("Jim")
 		GAME.PlayerRegistry.register_name("Jim", pid)
 		assert GAME.PlayerRegistry.whereis_name("Jim") == pid
+	end
+
+	test "Dispatch to all players works" do
+		{:ok, pid1} = GAME.PlayerAgent.start_link("Jim")
+		{:ok, pid2} = GAME.PlayerAgent.start_link("Kelly")
+		GAME.PlayerRegistry.dispatch({:change,  -10})
+		Process.sleep(10)
+		assert GAME.PlayerAgent.status(pid1).health == 90
+		assert GAME.PlayerAgent.status(pid2).health == 90
 	end
 	
 end

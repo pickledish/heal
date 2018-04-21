@@ -1,5 +1,5 @@
 defmodule Player do
-	defstruct name: "PLAYER", health: 100
+	defstruct name: "DEFAULT", health: 100
 end
 
 defmodule GAME.PlayerAgent do
