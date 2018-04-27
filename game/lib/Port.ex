@@ -6,6 +6,7 @@ defmodule GAME.Port do
 	def getResponse(packet) do
 		case String.split(packet) do
 			["signup", name] -> {:ok, "Welcome Aboard #{name}\n"}
+			["status"]       -> {:ok, "Boss:100\nAllie:50\nJimbo:5\nYelp:20\n> "}
 			_		         -> {:ok, "Command not recognized\n"}
 		end
 	end
