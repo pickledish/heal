@@ -14,12 +14,12 @@
 \renewcommand{\b}[1]{\textbf{#1}}
 
 \setlength{\droptitle}{-1cm}
-\setlength\parindent{30pt}
+\setlength\parindent{0pt}
 \setlength\parskip{8pt}
 \setstretch{1.60}
 \setlist{leftmargin=0.25in}
 
-\title{CSC 258 Project Proposal}
+\title{CSC 258 Project: Elixir Game}
 \author{Brandon Willett}
 
 \begin{document}
@@ -38,7 +38,25 @@
 
 	One reason that Elixir was a good choice to model this task is that its OTP (Open Telecom Platform, inherited from Erlang) framework was designed to make this exact type of program easy to write. The general model relies on a large number of cheap independent processes, which can be distributed just as easily among the system threads of one computer or the machines of a server farm. Each process has its own state that it manages, and they can affect each others' states only via message passing, which also scales in a simple and easy way. The only trouble is, with that many concurrent processes all running at once, the chance of a process failing is high, and in normal circumstances, one important process failing brings down the whole system. To combat this, the OTP model makes extensive use of ``Supervisors'' -- processes whose only job is to monitor other processes, and cleanly restart them if they fail. In this way, a well-designed Elixir application can have any number of failing worker processes, and a user would never notice.
 
-	In our Elixir game, 
+	In our Elixir game, most of these worker processes are set up to be players; whenever a player logs into they game, they get their own worker to monitor their health and send/receive messages for them (\texttt{PlayerAgent.ex}). This choice was made to simulate a larger-scale program with actual work to do (beyond just incrementing a player's health points), where the workers would perform tasks that had an actual chance of failing. Thus, we make sure that all players are supervised by a supervisor (\texttt{PlayerSupervisor.ex}), making the system quite fault-tolerant. In addition, the boss also has its own resilient process (in \texttt{BossAgent.ex}), with methods for healing itself and a ``stomp'' which damages all players, and its own supervisor for restarting if it fails (\texttt{BossSupervisor.ex}).
+
+	The last important component of the game, working a bit more behind the scenes, is the player process registry.
+
+	\section{Details}
+
+	Here's an example of a path through our program
+
+	\section{Experiments}
+
+	\textbf{Note: This project wasn't based on parallelizing a long-running serial task, so there can't much in the way of raw data or experimental comparisons.}
+
+	In order to try and make up for this, I tried to implement what I think is the next-best thing that does apply to this project, which is a pretty extensive suite of unit tests. As documented in the README, those can be found in the ``test'' folder and run with \texttt{mix test}. They run from simple things, like starting up a new player and making sure the boss can be damaged, to the most important parts of the project, like killing a player's process and then making sure it's automatically restarted with their current health being consistent with what it was before the process died.
+
+	In addition, in order to highlight how quickly processes can be restarted on the BEAM VM (which is the underlying virtual machine of all Erlang and thus Elixir programs), I attempted to run some tests to determine how many times a player's governing process could be forcefully killed (per second) while still responding to commands from an outside source. As we see in Figure 2, it's a pretty large number, at an average of about 500 deaths per second. This is another testament to the fault-tolerance of a system built in Elixir with the OTP framework -- even if thousands of processes died at once, their supervisors would have them all up and running again in a fraction of a second, which is vital for this kind of system.
+
+	\section{Citations}
+
+
 
 \end{document}
 
