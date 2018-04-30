@@ -48,25 +48,44 @@ defmodule GAME.PlayerAgent do
 	def handle_call({:change, amount}, _from, state) do
 		new = state.health + amount
 		:ets.insert(:health_cache, {state.name, new})
-		{:reply, :ok, Map.put(state, :health, new)}
+		res = {:ok, "Player #{state.name} healed for #{amount}!\n"}
+		{:reply, res, Map.put(state, :health, new)}
 	end
 
-	def handle_call({:execute, message}, _from, state) do
+	def handle_call({:execute, message}, from, state) do
 		case message do
-			{:heal, target, amt} -> 
-				pid = GAME.PlayerRegistry.whereis_name(target)
-				GAME.PlayerAgent.heal(pid, amt)
-				{:ok, "Player has been healed for #{amt}"}
-			{:damage, amt} -> 
-				GAME.BossAgent.damage(amt)
-				{:ok, "Boss has been damaged for #{amt}"}
-			_ ->
-				{:error, "Could not recognize command"}
+			{:heal, target, amt} -> {:reply, handle_heal(target, amt, from), state}
+			{:damage, amt}       -> {:reply, handle_damage(amt), state}
+			_                    -> {:reply, {:ok, "Could not recognize command\n"}, state}
 		end
 	end
 
 	def handle_call({:get}, _from, state) do
 		{:reply, state, state}
+	end
+
+	# PRIVATE -----------------------------------------------------------------
+
+	defp handle_send(target, intAmt, from) do
+		case GAME.PlayerRegistry.whereis_name(target) do
+		    :undefined             -> {:ok, "Player #{target} does not exist!\n"}
+		    pid when (pid == from) -> {:ok, "Players cannot heal themselves!\n"}
+		    pid                    -> GAME.PlayerAgent.heal(pid, intAmt)
+		end
+	end
+
+	defp handle_heal(target, strAmt, from) do
+		case Integer.parse(strAmt) do
+			{int, ""} -> handle_send(target, int, from)
+			_         -> {:ok, "Could not parse: #{inspect strAmt}\n"}
+		end
+	end
+
+	defp handle_damage(strAmt) do
+		case Integer.parse(strAmt) do
+			{int, ""} -> GAME.BossAgent.damage(int)
+			_         -> {:ok, "Could not parse: #{inspect strAmt}\n"}
+		end
 	end
 
 end

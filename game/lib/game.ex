@@ -10,7 +10,7 @@ defmodule GAME do
 
 		taskSupSpec = {Task.Supervisor, name: GAME.TaskSupervisor}
 
-		children = [taskSupSpec, GAME.PlayerSupervisor, GAME.PlayerRegistry, GAME.PortSupervisor]
+		children = [GAME.PlayerRegistry, GAME.BossSupervisor, GAME.PlayerSupervisor, taskSupSpec, GAME.PortSupervisor]
 		options  = [strategy: :one_for_one, name: GAME.Supervisor]
 
 		Supervisor.start_link(children, options)

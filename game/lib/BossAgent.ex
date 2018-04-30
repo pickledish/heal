@@ -11,6 +11,7 @@ defmodule GAME.BossAgent do
 	def start_link(_) do
 		{:ok, pid} = create()
 		register("Charlie", pid)
+		stomp()
 		{:ok, pid}
 	end
 
@@ -52,7 +53,8 @@ defmodule GAME.BossAgent do
 	def handle_call({:change, amount}, _from, state) do
 		new = state.health + amount
 		:ets.insert(:health_cache, {state.name, new})
-		{:reply, :ok, Map.put(state, :health, new)}
+		res = {:ok, "Boss #{state.name} damaged for #{amount}!\n"}
+		{:reply, res, Map.put(state, :health, new)}
 	end
 
 	def handle_call({:get}, _from, state) do

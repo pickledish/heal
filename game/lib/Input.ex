@@ -11,7 +11,7 @@ defmodule GAME.Input do
 			["signup", name]            -> {:signup, name}
 			[name, "heal", target, amt] -> {:command, name, {:heal, target, amt}}
 			[name, "damage", amt]       -> {:command, name, {:damage, amt}}
-			[name, "status"]            -> {:info}
+			["status"]                  -> {:info}
 			_                           -> {:error}
 		end
 	end
