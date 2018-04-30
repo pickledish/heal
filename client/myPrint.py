@@ -18,7 +18,7 @@ def mainLoop(host, port):
 
 		while(True):
 
-			command = "status\n".encode('ascii')
+			command = "b status\n".encode('ascii')
 			telnet.write(command)
 
 			breaker = '>'.encode('ascii')

@@ -24,6 +24,13 @@ defmodule GAME.PlayerRegistry do
 		GenServer.cast(:player_reg, {:dispatch, message})
 	end
 
+	def status() do
+		state = GenServer.call(:player_reg, {:getState})
+		toString = fn (k, v) -> "#{inspect k}:#{GAME.PlayerAgent.status(v).health}\n" end
+		res = Enum.reduce(state, "", fn ({k, v}, acc) -> acc <> toString.(k,v) end)
+		{:ok, res <> ">"}
+	end
+
 	# SERVER ------------------------------------------------------------------
 
 	def init(_) do
@@ -50,6 +57,10 @@ defmodule GAME.PlayerRegistry do
 			GenServer.call(pid, message)
 		end
 		{:noreply, state}
+	end
+
+	def handle_call({:getState}, _from, state) do
+		{:reply, state, state}
 	end
 
 end

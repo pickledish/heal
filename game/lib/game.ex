@@ -8,7 +8,9 @@ defmodule GAME do
 
 		:ets.new(:health_cache, [:named_table, :public])
 
-		children = [GAME.PlayerSupervisor, GAME.PlayerRegistry]
+		taskSupSpec = {Task.Supervisor, name: GAME.TaskSupervisor}
+
+		children = [taskSupSpec, GAME.PlayerSupervisor, GAME.PlayerRegistry, GAME.PortSupervisor]
 		options  = [strategy: :one_for_one, name: GAME.Supervisor]
 
 		Supervisor.start_link(children, options)

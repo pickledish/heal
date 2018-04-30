@@ -51,6 +51,20 @@ defmodule GAME.PlayerAgent do
 		{:reply, :ok, Map.put(state, :health, new)}
 	end
 
+	def handle_call({:execute, message}, _from, state) do
+		case message do
+			{:heal, target, amt} -> 
+				pid = GAME.PlayerRegistry.whereis_name(target)
+				GAME.PlayerAgent.heal(pid, amt)
+				{:ok, "Player has been healed for #{amt}"}
+			{:damage, amt} -> 
+				GAME.BossAgent.damage(amt)
+				{:ok, "Boss has been damaged for #{amt}"}
+			_ ->
+				{:error, "Could not recognize command"}
+		end
+	end
+
 	def handle_call({:get}, _from, state) do
 		{:reply, state, state}
 	end
