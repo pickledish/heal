@@ -1,5 +1,7 @@
 # Elixir Game
 
+All files/commits are also hosted on Github [here](https://github.com/pickledish/heal).
+
 ### Files
 
 All source code is located in the `game` directory. Inside of that folder, there is a folder named `lib` that contains all of the code for the project (the purpose of each file is detailed in the writeup). There is an additional folder called `test` that has a number of files for unit tests. There's also a `config` folder which came with the Mix project (I didn't touch it), and a `build` folder that contains the compiled binaries for the project.
