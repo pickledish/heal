@@ -48,6 +48,10 @@ defmodule GAME.PlayerRegistry do
 		end
 	end
 
+	def handle_call({:getState}, _from, state) do
+		{:reply, state, state}
+	end
+
 	def handle_cast({:unregister_name, player_name}, state) do
 		{:noreply, Map.delete(state, player_name)}
 	end
@@ -57,10 +61,6 @@ defmodule GAME.PlayerRegistry do
 			GenServer.call(pid, message)
 		end
 		{:noreply, state}
-	end
-
-	def handle_call({:getState}, _from, state) do
-		{:reply, state, state}
 	end
 
 end

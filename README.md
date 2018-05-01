@@ -20,6 +20,27 @@ The game is very simple, since making it intricate or particularly engaging wasn
 
 Then, you can submit a heal command as `$name heal $target $amount`, with $target being the name of the person you'd like to heal, and $amount being some integer (higher numbers means more healing, and there's no downside -- not a very balanced game). Or, you can spend your time damaging the boss, by typing `$name damage $amount`, in a similar way. Balance is important, since the boss does a damaging "stomp" every 10 seconds. You can also heal the boss, Charlie, but it's not recommended.
 
+Other commands include:
+
+- `status`, which outputs a mapping of all player names and their current HP values
+- `kill $name`, which kills the process belonging to player $name. Since the process is immediately restarted, this has no effect :)
+
 Note, the game isn't very robust, because I wanted to spend more time getting the message-passing and supervision protocols right. This means that some simple things, like having multiple "healing" moves of varying power or players "dying" once they reach 0 health, aren't implemented.
 
 ### Testing
+
+To run the unit tests, just comment out line 16 of `mix.exs` (sorry, it's to make sure the program gets on with the tests and doesn't wait around listening for telnet connections) so that it looks like the following:
+
+```Elixir
+def application do
+	[
+		# mod: {GAME, []},
+		extra_applications: [:logger]
+	]
+end
+```
+
+Then, just run `mix test --trace` to see all the tests (hopefully) pass.
+
+
+
