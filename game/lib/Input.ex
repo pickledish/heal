@@ -32,8 +32,11 @@ defmodule GAME.Input do
 	end
 
 	def sendMessage(player_name, message) do
-		pid = GAME.PlayerRegistry.whereis_name(player_name)
-		GenServer.call(pid, {:execute, message})
+		res = GAME.PlayerRegistry.whereis_name(player_name)
+		case res do
+		    :undefined -> {:ok, "No such player exists for command\n"}
+		    pid        -> GenServer.call(pid, {:execute, message})
+		end
 	end
 
 	def newPlayer(player_name) do

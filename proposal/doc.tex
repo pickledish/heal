@@ -3,6 +3,7 @@
 \usepackage[shortlabels]{enumitem}
 \usepackage{amsmath,amssymb,amsthm,dsfont}
 \usepackage{setspace,parskip,multicol,titling}
+\usepackage{graphicx}
 
 \newcommand{\R}{\mathds{R}}
 \newcommand{\Z}{\mathds{Z}}
@@ -40,7 +41,15 @@
 
 	In our Elixir game, most of these worker processes are set up to be players; whenever a player logs into they game, they get their own worker to monitor their health and send/receive messages for them (\texttt{PlayerAgent.ex}). This choice was made to simulate a larger-scale program with actual work to do (beyond just incrementing a player's health points), where the workers would perform tasks that had an actual chance of failing. Thus, we make sure that all players are supervised by a supervisor (\texttt{PlayerSupervisor.ex}), making the system quite fault-tolerant. In addition, the boss also has its own resilient process (in \texttt{BossAgent.ex}), with methods for healing itself and a ``stomp'' which damages all players, and its own supervisor for restarting if it fails (\texttt{BossSupervisor.ex}).
 
-	The last important component of the game, working a bit more behind the scenes, is the player process registry. We'd like to be able to heal our teammates by name, but in the case that their process fails, they'll be put back up and running with a new and different process ID, so a straight mapping can't work. Instead, we use a hand-built process registry -- whenever a new player process is started (or restarted), right after getting its last known health from a data store (in this case cache), it registers its name to its PID in the registry (\texttt{PlayerRegistry.ex}). In this way, even in the presence of failures, we have an up-to-date (and also supervised) mapping from player names to their PIDs, so we never send a message to a dead process. In fact, this pattern is so common with Elixir applications that it has a built-in process registry, that I didn't find out until after I'd built my own!
+	The last important component of the game, working a bit more behind the scenes, is the player process registry. We'd like to be able to heal our teammates by name, but in the case that their process fails, they'll be put back up and running with a new and different process ID, so a straight mapping can't work. Instead, we use a hand-built process registry -- whenever a new player process is started (or restarted), right after getting its last known health from a data store (in this case cache), it registers its name to its PID in the registry (\texttt{PlayerRegistry.ex}). In this way, even in the presence of failures, we have an up-to-date (and also supervised) mapping from player names to their PIDs, so we never send a message to a dead process. I built my own, but this pattern is so common with Elixir applications that it has a built-in process registry!
+
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.8\textwidth]{Diagram}
+		\\[1.5em]
+		\caption{A general overview of the Elixir Game's supervision tree}
+		\label{fig:mesh1}
+	\end{figure}
 
 	\section{Details}
 
