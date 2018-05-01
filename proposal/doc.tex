@@ -43,15 +43,16 @@
 
 	The last important component of the game, working a bit more behind the scenes, is the player process registry. We'd like to be able to heal our teammates by name, but in the case that their process fails, they'll be put back up and running with a new and different process ID, so a straight mapping can't work. Instead, we use a hand-built process registry -- whenever a new player process is started (or restarted), right after getting its last known health from a data store (in this case cache), it registers its name to its PID in the registry (\texttt{PlayerRegistry.ex}). In this way, even in the presence of failures, we have an up-to-date (and also supervised) mapping from player names to their PIDs, so we never send a message to a dead process. I built my own, but this pattern is so common with Elixir applications that it has a built-in process registry!
 
-	\begin{figure}[h]
+	\begin{figure}[ht]
 		\centering
 		\includegraphics[width=0.8\textwidth]{Diagram}
 		\\[1.5em]
 		\caption{A general overview of the Elixir Game's supervision tree}
 		\label{fig:mesh1}
+		\vspace*{12pt}
 	\end{figure}
 
-	\section{Details}
+	\section{Implementation Details}
 
 	To show the detailed running of the program, we can walk through an example sequence of events.
 
@@ -61,15 +62,39 @@
 
 	Finally, when a player process (or literally any other process in the application, even a supervisor) dies, the Player Supervisor will restart a new process for it, which will immediately register the name under a new PID with the Registry, and also check the cache (or some generic data store) to find the last-known health for that player. That way, even if a process dies in the middle of handling a message, it'll be started up again quickly, affecting no other players, and only that single message will be lost in the process.
 
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[width=0.8\textwidth]{failures}
+		\caption{A general overview of the Elixir Game's supervision tree}
+		\label{fig:mesh2}
+		\vspace*{12pt}
+	\end{figure}
+
 	\section{Experiments}
 
 	\textbf{Note: This project wasn't based on parallelizing a long-running serial task, so there can't much in the way of raw data or experimental comparisons.}
 
 	In order to try and make up for this, I tried to implement what I think is the next-best thing that does apply to this project, which is a pretty extensive suite of unit tests. As documented in the README, those can be found in the ``test'' folder and run with \texttt{mix test}. They run from simple things, like starting up a new player and making sure the boss can be damaged, to the most important parts of the project, like killing a player's process and then making sure it's automatically restarted with their current health being consistent with what it was before the process died.
 
-	In addition, in order to highlight how quickly processes can be restarted on the BEAM VM (which is the underlying virtual machine of all Erlang and thus Elixir programs), I attempted to run some tests to determine how many times a player's governing process could be forcefully killed (per second) while still responding to commands from an outside source. As we see in Figure 2, it's a pretty large number, at an average of about 500 deaths per second. This is another testament to the fault-tolerance of a system built in Elixir with the OTP framework -- even if thousands of processes died at once, their supervisors would have them all up and running again in a fraction of a second, which is vital for this kind of system.
+	In addition, in order to highlight how quickly processes can be restarted on the BEAM VM (which is the underlying virtual machine of all Erlang and thus Elixir programs), I attempted to run some tests to determine how many times a player's governing process could be forcefully killed (per second) while still responding to commands from an outside source. As we see in Figure 2, it's a pretty large number, at an average of over 100 deaths per second. This is another testament to the fault-tolerance of a system built in Elixir with the OTP framework -- even if thousands of processes died at once, their supervisors would have them all up and running again in a fraction of a second, which is vital for this kind of system.
 
 	\section{Citations}
+
+	\begin{itemize}
+
+		\item Introduction to Mix and OTP frameworks\\
+		\verb|https://elixir-lang.org/getting-started/mix-otp/introduction-to-mix.html|
+
+		\item ``Learn You Some Erlang for Great Good'' Guide for Process Management\\
+		\verb|http://learnyousomeerlang.com/content|
+
+		\item Documentation for Elixir and Mix and IEX unit tests (great documentation)\\
+		\verb|https://hexdocs.pm/elixir/Kernel.html|
+
+		\item Process registry in Elixir: A practical example\\
+		\verb|https://m.alphasights.com/process-registry-in-elixir-a-practical-example-4500ee7c0dcc|
+
+	\end{itemize}
 
 
 
