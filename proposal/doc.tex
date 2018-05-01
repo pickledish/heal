@@ -40,11 +40,17 @@
 
 	In our Elixir game, most of these worker processes are set up to be players; whenever a player logs into they game, they get their own worker to monitor their health and send/receive messages for them (\texttt{PlayerAgent.ex}). This choice was made to simulate a larger-scale program with actual work to do (beyond just incrementing a player's health points), where the workers would perform tasks that had an actual chance of failing. Thus, we make sure that all players are supervised by a supervisor (\texttt{PlayerSupervisor.ex}), making the system quite fault-tolerant. In addition, the boss also has its own resilient process (in \texttt{BossAgent.ex}), with methods for healing itself and a ``stomp'' which damages all players, and its own supervisor for restarting if it fails (\texttt{BossSupervisor.ex}).
 
-	The last important component of the game, working a bit more behind the scenes, is the player process registry.
+	The last important component of the game, working a bit more behind the scenes, is the player process registry. We'd like to be able to heal our teammates by name, but in the case that their process fails, they'll be put back up and running with a new and different process ID, so a straight mapping can't work. Instead, we use a hand-built process registry -- whenever a new player process is started (or restarted), right after getting its last known health from a data store (in this case cache), it registers its name to its PID in the registry (\texttt{PlayerRegistry.ex}). In this way, even in the presence of failures, we have an up-to-date (and also supervised) mapping from player names to their PIDs, so we never send a message to a dead process. In fact, this pattern is so common with Elixir applications that it has a built-in process registry, that I didn't find out until after I'd built my own!
 
 	\section{Details}
 
-	Here's an example of a path through our program
+	To show the detailed running of the program, we can walk through an example sequence of events.
+
+	First, on startup, the overall supervisor (highest in the supervision tree) starts the supervisors for Players, the Boss, the Registry, and the Ports (see Figure 1). Then, the Boss supervisor begins a Boss process, which automatically registers itself as "Charlie" (the boss's name) under the Registry and begins to stomp, using the registry's \texttt{dispatch} function to send a damaging message to all players in the registry. In addition, the Port supervisor begins to listen on localhost, port 6666. 
+
+	When a player connects, the Port Supervisor spawns a new Task process to serve the user, ensuring it can continue to listen for other players and not be busy dealing with \texttt{telnet} messages. Then, methods in \texttt{Input.ex} help manage and direct what to do with a user's input: when they type \texttt{signup Brandon}, for example, it sends the (dynamic) Player Supervisor a message to spawn and register a new player named Brandon. Then, all subsequent messages of Brandon are sent through the Registry to find the correct PID, and handled by the backend GenServer instance of each player process.
+
+	Finally, when a player process (or literally any other process in the application, even a supervisor) dies, the Player Supervisor will restart a new process for it, which will immediately register the name under a new PID with the Registry, and also check the cache (or some generic data store) to find the last-known health for that player. That way, even if a process dies in the middle of handling a message, it'll be started up again quickly, affecting no other players, and only that single message will be lost in the process.
 
 	\section{Experiments}
 

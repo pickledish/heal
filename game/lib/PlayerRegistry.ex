@@ -26,9 +26,9 @@ defmodule GAME.PlayerRegistry do
 
 	def status() do
 		state = GenServer.call(:player_reg, {:getState})
-		toString = fn (k, v) -> "#{inspect k}:#{GAME.PlayerAgent.status(v).health}\n" end
-		res = Enum.reduce(state, "", fn ({k, v}, acc) -> acc <> toString.(k,v) end)
-		{:ok, res <> ">"}
+		toString = fn (k,v) -> "#{k}:#{GAME.PlayerAgent.status(v).health}\n" end
+		res = Enum.reduce(state, "", fn ({k,v},acc) -> acc <> toString.(k,v) end)
+		{:ok, res}
 	end
 
 	# SERVER ------------------------------------------------------------------
@@ -64,24 +64,5 @@ defmodule GAME.PlayerRegistry do
 	end
 
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

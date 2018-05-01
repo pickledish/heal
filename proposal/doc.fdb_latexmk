@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1525061214 "doc.tex" "doc.pdf" "doc" 1525061215
+["pdflatex"] 1525135108 "doc.tex" "doc.pdf" "doc" 1525135109
   "/Users/brandon/Library/texmf/tex/latex/commonstuff/enumitem.sty" 1317248768 42666 6fa770e3485520a6a5f2ea7d259c8f8d ""
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -54,9 +54,9 @@
   "/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1473862615 1888048 f2c5faed5981a516f406b2ccc20bff71 ""
   "/usr/local/texlive/2016/texmf-var/web2c/pdftex/pdflatex.fmt" 1463979169 3873397 413fbfbbedb8e719ddc392043a7add02 ""
   "/usr/local/texlive/2016/texmf.cnf" 1463979140 577 2938757e76f31531e65cc647e3507693 ""
-  "doc.aux" 1525061214 364 f3a9ad64b7c33bb10164a3fa350c67dd ""
-  "doc.tex" 1525061213 6968 1cb44688f814cfccefde83a40486eca7 ""
+  "doc.aux" 1525135108 364 f0ce88a29a036814ab77aeb39f790a4b ""
+  "doc.tex" 1525135107 9471 34614ed5deca3e7e6cf46fad6ff78116 ""
   (generated)
-  "doc.pdf"
-  "doc.aux"
   "doc.log"
+  "doc.aux"
+  "doc.pdf"

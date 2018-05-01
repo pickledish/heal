@@ -16,8 +16,8 @@ Then, in order to compile the project, you `cd` into the `game` directory and ru
 
 The game is very simple, since making it intricate or particularly engaging wasn't really the point of the project. Once the server is running, you can log in by using `telnet 127.0.0.1 6666`, which should give you a shell for the game, and then make a new player for yourself using `signup $name` with `$name` being your character (no spaces).
 
-Then, you can submit a heal command as `$name heal $target $amount`, with $target being the name of the person you'd like to heal, and $amount being some integer (higher numbers means more healing, and there's no downside -- not a very balanced game). Or, you can spend your time damaging the boss, by typing `$name damage $amount`, in a similar way. You can also heal the boss, Charlie, but it's not recommended.
+Then, you can submit a heal command as `$name heal $target $amount`, with $target being the name of the person you'd like to heal, and $amount being some integer (higher numbers means more healing, and there's no downside -- not a very balanced game). Or, you can spend your time damaging the boss, by typing `$name damage $amount`, in a similar way. Balance is important, since the boss does a damaging "stomp" every 10 seconds. You can also heal the boss, Charlie, but it's not recommended.
 
-Note, the game isn't very robust, because I wanted to spend more time getting the message-passing and supervision protocols right. This means that some simple things, like players "dying" once they reach 0 health or ____, aren't implemented.
+Note, the game isn't very robust, because I wanted to spend more time getting the message-passing and supervision protocols right. This means that some simple things, like having multiple "healing" moves of varying power or players "dying" once they reach 0 health, aren't implemented.
 
 ### Testing

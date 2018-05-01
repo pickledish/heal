@@ -1,6 +1,7 @@
 defmodule GAME.Input do
 
 	def serve(socket) do
+		write_line("> ", socket)
 		{:ok, res} = getResponse socket
 		write_line(res, socket)
 		serve socket 
@@ -8,11 +9,12 @@ defmodule GAME.Input do
 
 	defp parse(input) do
 		case String.split(input) do
-			["signup", name]            -> {:signup, name}
-			[name, "heal", target, amt] -> {:command, name, {:heal, target, amt}}
-			[name, "damage", amt]       -> {:command, name, {:damage, amt}}
-			["status"]                  -> {:info}
-			_                           -> {:error}
+			["signup", name]         -> {:signup, name}
+			[name, "heal", tgt, amt] -> {:command, name, {:heal, tgt, amt}}
+			[name, "damage", amt]    -> {:command, name, {:damage, amt}}
+			["status"]               -> {:info}
+			["kill", name]           -> {:kill, name}
+			_                        -> {:error}
 		end
 	end
 
@@ -23,6 +25,7 @@ defmodule GAME.Input do
 				{:signup, name}       -> newPlayer(name)
 				{:command, name, msg} -> sendMessage(name, msg)
 				{:info}               -> getStatus()
+				{:kill, name}         -> kill(name)
 				{:error}              -> {:ok, "Command not recognized?\n"}
 			end
 		end
@@ -40,6 +43,16 @@ defmodule GAME.Input do
 
 	def getStatus() do
 		GAME.PlayerRegistry.status()
+	end
+
+	def kill(player_name) do
+		res = GAME.PlayerRegistry.whereis_name(player_name)
+		case res do
+		    :undefined -> {:ok, "No such player exists to kill\n"}
+		    pid ->
+				Process.exit(pid, :kill)
+				{:ok, "Process of player #{player_name} has been killed\n"}
+		end
 	end
 
 	def write_line(line, socket) do
